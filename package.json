@@ -1,0 +1,28 @@
+{
+    "name": "gitbook-plugin-asciidoc-include",
+    "description": "Syntax asciidoc include for Gitbook",
+    "version": "0.1.4",
+    "engines": {
+      "gitbook": "*"
+    },
+    "homepage": "https://github.com/ZihoRo/gitbook-plugin-asciidoc-include",
+    "repository": {
+      "type": "git",
+      "url": "https://github.com/ZihoRo/gitbook-plugin-asciidoc-include.git"
+    },
+    "bugs": {
+      "url": "https://github.com/ZihoRo/gitbook-plugin-asciidoc-include/issues"
+    },
+    "gitbook": {
+        "properties": {
+        }
+    },
+    "keywords": [
+        "gitbook",
+        "plugin",
+        "asciidoc",
+        "include"
+    ],
+    "license": "MIT",
+    "author": "ZihoRo <zihoro@zihoro.com>"
+}
