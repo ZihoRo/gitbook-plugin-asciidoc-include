@@ -1,11 +1,14 @@
+require('gitbook-core')
+
 module.exports = {
     hooks: {
         "page:before": function(page) {
-            console.log('%s,%s','page1',page);
+            var logger = this.output.getLogger();
+            logger.debug.ln('page:before:pre :' + page);
             if(page != undefined && ((page.path.test(/\.adoc$/) || page.path.test(/\.asciidoc$/)) || page.type === 'asciidoc')){
                 page.content = page.content.replace(/include::(.+)\[.*\]/g,'{% include \"$1\" %}');
             }
-            console.log('%s,%s','page2',page);
+            logger.debug.ln('page:before:post :' + page);
             return page;
         }
     }
