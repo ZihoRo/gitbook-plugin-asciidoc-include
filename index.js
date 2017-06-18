@@ -5,29 +5,17 @@ var Q = require('q');
 module.exports = {
     hooks: {
         "page:before": function(page) {
-            if(!page || page.type !== 'asciidoc'){
+            if(!page || page.type !== 'asciidoc' || !page.content || (typeof page.content) !== 'string'){
+                if(!page){
+                    this.log.error.ln('page: ' + page);
+                } else if(page.type !== 'asciidoc'){
+                    this.log.error.ln('page.type: ' + page.type);
+                } else if(!page.content) {
+                    this.log.error.ln('page.content: ' + page.content);
+                } else if((typeof page.content) !== 'string') {
+                    this.log.error.ln('(typeof page.content): ' + (typeof page.content));
+                }
                 return page;
-            }
-            function obj2string(o){
-                var r=[];
-                if(typeof o=="string"){
-                    return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\"";
-                }
-                if(typeof o=="object"){
-                    if(!o.sort){
-                        for(var i in o){
-                            r.push(i+":"+obj2string(o[i]));
-                        }
-                        r="{"+r.join()+"}";
-                    }else{
-                        for(var i=0;i<o.length;i++){
-                            r.push(obj2string(o[i]))
-                        }
-                        r="["+r.join()+"]";
-                    }
-                    return r;
-                }
-                return o.toString();
             }
             var replaceSyntax = this.config.get('pluginsConfig.asciidoc-include.syntax');
             this.log.debug.ln('replaceSyntax: ' + replaceSyntax);
@@ -50,7 +38,7 @@ module.exports = {
                 context.match = context.matchs[0].trim();
                 // find block and replace
                 context.file = context.blockHandler(context.matchs[1]);
-                context.logger.info.ln('file: ' + context.file + ', matchs[1]: ' + context.matchs[1]);
+                context.logger.debug.ln('----------------file: ' + context.file + ', matchs[1]: ' + context.matchs[1]);
                 if(new RegExp('\\{(.+?)\\}', 'g').test(context.file) || new RegExp('\\w{2,}://', 'g').test(context.file) || new RegExp('^git\\+', 'ig').test(context.file)){
                     // block not exist or filepath is not a system file path
                     context.logger.error.ln('filepath: ' + context.file + ', block not exist or filepath is not a system file path');
@@ -69,7 +57,7 @@ module.exports = {
                         context.page.content = context.page.content.substring(1, context.page.content.length - 1);
                         return context.page;
                     }
-                    context.logger.debug.ln('match: ' + context.match + ', replace: true');
+                    context.logger.debug.ln('----------------match: ' + context.match + ', replace: true');
                     context.page.content = context.page.content.replace(context.match, text);
                     return handlerNext(context);
                 }, function(error){
@@ -95,7 +83,7 @@ module.exports = {
                         var find = new RegExp('\\n:' + key + '\\s*:(.+?)\\n','i').exec(context.page.content);
                         if(!find){
                             // block not exists
-                            context.logger.error.ln('filepath: ' + filepath + ', don\'t find block: ' + key);
+                            context.logger.error.ln('----------------filepath: ' + filepath + ', don\'t find block: ' + key);
                             matchs = regex.exec(filepath);
                             continue;
                         }
@@ -104,7 +92,7 @@ module.exports = {
                     var oldFilepath = filepath;
                     // replace block
                     filepath = filepath.replace(new RegExp('\\{' + key + '\\}','ig'), context.blocks[key]);
-                    context.logger.debug.ln('block: ' + key + ', oldFilepath: ' + oldFilepath + ', blockReplace: ' + filepath);
+                    context.logger.debug.ln('----------------block: ' + key + ', oldFilepath: ' + oldFilepath + ', blockReplace: ' + filepath);
                     matchs = regex.exec(filepath);
                 }
                 return filepath;
