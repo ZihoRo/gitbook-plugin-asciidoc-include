@@ -8,10 +8,31 @@ module.exports = {
             if(!page || page.type !== 'asciidoc'){
                 return page;
             }
-            var replaceSyntax = this.options.pluginsConfig["asciidoc-include"]['syntax'];
+            function obj2string(o){
+                var r=[];
+                if(typeof o=="string"){
+                    return "\""+o.replace(/([\'\"\\])/g,"\\$1").replace(/(\n)/g,"\\n").replace(/(\r)/g,"\\r").replace(/(\t)/g,"\\t")+"\"";
+                }
+                if(typeof o=="object"){
+                    if(!o.sort){
+                        for(var i in o){
+                            r.push(i+":"+obj2string(o[i]));
+                        }
+                        r="{"+r.join()+"}";
+                    }else{
+                        for(var i=0;i<o.length;i++){
+                            r.push(obj2string(o[i]))
+                        }
+                        r="["+r.join()+"]";
+                    }
+                    return r;
+                }
+                return o.toString();
+            }
+            var replaceSyntax = this.config.get('pluginsConfig.asciidoc-include.syntax');
+            this.log.debug.ln('replaceSyntax: ' + replaceSyntax);
             if(replaceSyntax === 'gitbook'){
                 // can't support asciidoc include block
-                this.log.debug.ln('replaceSyntax: ' + replaceSyntax);
                 page.content = page.content.replace(/\ninclude::(.+?)\[.*?\](?=\n)/g, '\n{% include "$1" %}');
                 return page;
             }
