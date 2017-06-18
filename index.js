@@ -8,6 +8,15 @@ module.exports = {
             if(!page || page.type !== 'asciidoc'){
                 return page;
             }
+            var replaceSyntax = this.options.pluginsConfig["asciidoc-include"]['syntax'];
+            if(replaceSyntax === 'gitbook'){
+                this.log.debug.ln('replaceSyntax: ' + replaceSyntax);
+                page.content = page.content.replace(/\ninclude::(.+?)\[.*?\](?=\n)/g, '\n{% include "$1" %}');
+                return page;
+            }
+            if(replaceSyntax !== 'asciidoc'){
+                return page;
+            }
             var handlerNext = function(context) {
                 context.matchs = context.regex.exec(context.page.content);
                 if(!context.matchs){
