@@ -36,19 +36,20 @@ module.exports = {
             context.blockHandler = function(filepath){
                 var regex = /\{(.+)\}/ig;
                 var matchs = regex.exec(filepath);
-                context.logger.debug.ln('filepathMatchs:' + matchs);
                 while(matchs){
                     var key = matchs[1].toString().toLowerCase();
                     if(!context.blocks[key]){
                         var find = new RegExp('\\n:' + key + '\\s*:(.+)\\n','ig').exec(context.page.content);
+                        context.logger.debug.ln('find: ' + find);
                         if(!find){
-                            context.logger.error.ln('filepath:' + filepath + ', don\'t find block: ' + key);
+                            context.logger.error.ln('filepath: ' + filepath + ', don\'t find block: ' + key);
                             continue;
                         }
                         context.blocks[key] = find[1].toString().trim();
                     }
+                    var oldFilepath = filepath;
                     filepath = filepath.replace(new RegExp('\\{' + key + '\\}','ig'), context.blocks[key]);
-                    context.logger.debug.ln('filepath:' + filepath + ', blockReplace: ' + filepath);
+                    context.logger.debug.ln('block: ' + key + ', oldFilepath: ' + oldFilepath + ', blockReplace: ' + filepath);
                     matchs = regex.exec(filepath);
                 }
                 return filepath;
