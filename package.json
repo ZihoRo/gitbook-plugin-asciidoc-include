@@ -17,6 +17,9 @@
         "properties": {
         }
     },
+    "dependencies": {
+      "is": "*"
+    },
     "keywords": [
         "gitbook",
         "plugin",
