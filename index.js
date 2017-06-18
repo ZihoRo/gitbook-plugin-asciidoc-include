@@ -36,6 +36,7 @@ module.exports = {
             context.blockHandler = function(filepath){
                 var regex = /\{(.+)\}/ig;
                 var matchs = regex.exec(filepath);
+                context.logger.debug.ln('filepathMatchs:' + matchs);
                 while(matchs){
                     var key = matchs[1].toString().toLowerCase();
                     if(!context.blocks[key]){
