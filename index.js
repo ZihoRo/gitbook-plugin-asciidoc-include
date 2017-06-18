@@ -10,6 +10,7 @@ module.exports = {
             }
             var replaceSyntax = this.options.pluginsConfig["asciidoc-include"]['syntax'];
             if(replaceSyntax === 'gitbook'){
+                // can't support asciidoc include block
                 this.log.debug.ln('replaceSyntax: ' + replaceSyntax);
                 page.content = page.content.replace(/\ninclude::(.+?)\[.*?\](?=\n)/g, '\n{% include "$1" %}');
                 return page;
