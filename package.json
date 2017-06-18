@@ -17,6 +17,11 @@
         "properties": {
         }
     },
+    "dependencies": {
+        "q": "*",
+        "fs": "*",
+        "path": "*"
+    },
     "keywords": [
         "gitbook",
         "plugin",
