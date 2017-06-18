@@ -40,13 +40,13 @@ module.exports = {
                 while(matchs){
                     var key = matchs[1].toString().toLowerCase();
                     if(!context.blocks[key]){
-                        var find = new Regexp('\\n:' + key + '\\s*:(.+)\\n','ig').exec(context.page.content);
+                        var find = new RegExp('\\n:' + key + '\\s*:(.+)\\n','ig').exec(context.page.content);
                         if(!find){
                             continue;
                         }
                         context.blocks[key] = find[1].toString().trim();
                     }
-                    filepath = filepath.replace(new Regexp('\\{' + key + '\\}','ig'), context.blocks[key]);
+                    filepath = filepath.replace(new RegExp('\\{' + key + '\\}','ig'), context.blocks[key]);
                     context.logger.info.ln('blockReplace: ' + filepath);
                     matchs = regex.exec(filepath);
                 }
