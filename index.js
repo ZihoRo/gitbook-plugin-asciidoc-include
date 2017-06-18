@@ -16,7 +16,11 @@ module.exports = {
                     return context.page;
                 }
                 context.match = context.matchs[0].trim();
-                context.file = context.blockHandler(path.join(context.dir, context.matchs[1]));
+                var file = context.blockHandler(context.matchs[1]);
+                if(file === context.matchs[1]){
+                    return context.page;
+                }
+                context.file = path.join(context.dir, file);
                 return Q.nfcall(fs.readFile, context.file, context.charset).then(function(text) {
                     return text.toString().trim();
                 }).then(function(text) {
