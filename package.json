@@ -18,9 +18,7 @@
         }
     },
     "dependencies": {
-        "q": "*",
-        "fs": "*",
-        "path": "*"
+        "q": "1.4.1"
     },
     "keywords": [
         "gitbook",
