@@ -16,11 +16,7 @@ module.exports = {
                     return context.page;
                 }
                 context.match = context.matchs[0].trim();
-                var file = context.blockHandler(context.matchs[1]);
-                if(file === context.matchs[1]){
-                    return context.page;
-                }
-                context.file = path.join(context.dir, file);
+                context.file = path.join(context.dir, context.blockHandler(context.matchs[1]));
                 return Q.nfcall(fs.readFile, context.file, context.charset).then(function(text) {
                     return text.toString().trim();
                 }).then(function(text) {
@@ -38,7 +34,7 @@ module.exports = {
             context.dir = path.dirname(page.rawPath);
             context.charset = this.config.get('charset', 'UTF-8');
             context.logger = this.log;
-            context.regex = /\ninclude::(.+)\[.*\]\n/;
+            context.regex = /\ninclude::(.+)\[.*\]\b/g;
             context.blockHandler = function(filepath){
                 var regex = /\{(.+)\}/ig;
                 var matchs = regex.exec(filepath);
