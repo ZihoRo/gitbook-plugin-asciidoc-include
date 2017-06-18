@@ -27,7 +27,7 @@ module.exports = {
                 }
                 // join path
                 context.file = path.join(context.dir, context.file);
-                return Q.nfcall(fs.readFile, context.file, context.charset).then(function(text) {
+                return Q.nfcall(fs.readFile, context.file).then(function(text) {
                     // reset regex lastIndex before the match string first index
                     context.regex.lastIndex = context.regex.lastIndex - context.matchs[0].length;
                     // trim the read file string
@@ -51,10 +51,8 @@ module.exports = {
             var context = {};
             context.blocks = {};
             context.page = page;
-            context.dir = path.dirname(page.rawPath);
-            // get file encoding
-            context.charset = this.config.get('charset', 'UTF-8');
             context.logger = this.log;
+            context.dir = path.dirname(page.rawPath);
             context.regex = /\ninclude::(.+?)\[.*?\](?=\n)/g;
             context.blockHandler = function(filepath){
                 var regex = /\{(.+?)\}/ig;
