@@ -9,6 +9,7 @@ module.exports = {
                 return page;
             }
             var handlerNext = function(context) {
+                context.logger.debug.ln('page: ' + context.page.content);
                 context.matchs = context.regex.exec(context.page.content);
                 if(!context.matchs){
                     return context.page;
