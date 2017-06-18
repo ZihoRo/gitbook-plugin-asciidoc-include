@@ -11,6 +11,7 @@ module.exports = {
             var handlerNext = function(context) {
                 context.logger.debug.ln('page: ' + context.page.content);
                 context.matchs = context.regex.exec(context.page.content);
+                context.logger.debug.ln('matchs: ' + context.matchs);
                 if(!context.matchs){
                     return context.page;
                 }
@@ -33,7 +34,7 @@ module.exports = {
             context.dir = path.dirname(page.rawPath);
             context.charset = this.config.get('charset', 'UTF-8');
             context.logger = this.log;
-            context.regex = /\n?include::(.+)\[.*\]\n?/ig;
+            context.regex = /\ninclude::(.+)\[.*\]\n/g;
             context.blockHandler = function(filepath){
                 var regex = /\{(.+)\}/ig;
                 var matchs = regex.exec(filepath);
