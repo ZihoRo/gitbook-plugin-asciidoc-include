@@ -18,7 +18,8 @@
             "syntax": {
                 "type": "string",
                 "default": "asciidoc",
-                "description": "'asciidoc' or 'gitbook'"
+                "description": "the syntax block replace include block",
+                "enum":["asciidoc", "gitbook"]
             }
         }
     },
