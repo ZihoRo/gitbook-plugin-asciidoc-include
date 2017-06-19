@@ -134,7 +134,7 @@ I'm a.adoc
     ]
 }
 ----
-2. 自己 `fork` ，然后按下面说明修改， `push` 到 `github` ，剩下的就是上一方法的安装，将自己的 `github-url` 替换到 `git+` 之后
+2. 自己 `fork` ，然后按下面说明修改 `index.js`， `push` 到 `github` ，剩下的就是上一方法的安装，将自己的 `github-url` 替换到 `git+` 之后
 +
 [source, js]
 .修改前
