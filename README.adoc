@@ -1,0 +1,176 @@
+= GitBook Plugin: Asciidoc Include
+
+[[pluginInstall]]
+== 0. 插件安装：
+* 之前的版本不一定可用，最低可用版本为 `0.1.8` ：
++
+[source, json]
+.book.json
+----
+{
+    "plugins": [
+        "asciidoc-include@0.1.8"
+    ]
+}
+----
+
+* `gitbook` 版本：
++
+[source, json]
+.book.json
+----
+{
+    "gitbook": ">=2.4.0"
+}
+----
+
+[[pluginConfig]]
+== 1. 插件配置：
+* 配置说明：
++
+[cols="1,1,1,1,2",options="header"]
+|===
+| 键        | 类型   | 值                      | 默认值       | 说明
+| `syntax`
+| string
+a|
+* `asciidoc`
+* `gitbook`
+| `asciidoc`
+a|
+* 当 `syntax === 'asciidoc'` 时，本插件会将 `include` 语法指向文件的内容与该处 `include` 语法内容替换
+* 当 `syntax === 'gitbook'` 时，本插件会将 `include` 语法转化为 `gitbook` 的内容引用语法
+|===
+* 配置示例：
++
+[source, json]
+.book.json
+----
+{
+    "pluginsConfig": {
+        "asciidoc-include": {
+            "syntax": "gitbook"
+        }
+    }
+}
+----
+
+[[pluginUsing]]
+== 2. 插件使用：
+* 当前目录有 `a.adoc` ， `b.adoc` ， `c.adoc` 两个文件，没有 `d.adoc`：
+** `a.adoc` 内容如下：
++
+[source, asciidoc]
+.a.adoc
+----
+:cPath   : .
+:dPath   : .
+
+\include::./b.adoc[]
+\include::{cpath}/c.adoc[]
+\include::{dpath}/d.adoc[]
+
+I'm a.adoc
+----
+** `b.adoc` 内容如下：
++
+[source, asciidoc]
+.b.adoc
+----
+I'm b.adoc
+----
+** `c.adoc` 内容如下：
++
+[source, asciidoc]
+.c.adoc
+----
+I'm c.adoc
+----
+** 在转化成 `HTML` 之前， `asciidoc-include` 插件会查找 `a.adoc` 里面的 `include` 语法，根据配置 `syntax` 的值采用不同的处理方式
+*** [[asciidoc]]`asciidoc` 语法处理方式的结果如下：
++
+[source, asciidoc]
+.转化成 `a.html` 前夕的 `a.adoc`
+----
+:cPath   : .
+:dPath   : .
+
+I'm b.adoc
+I'm c.adoc
+\include::{dpath}/d.adoc[]
+
+I'm a.adoc
+----
+*** [[gitbook]]`gitbook` 语法处理方式的结果如下：
++
+[source, asciidoc]
+.转化成 `a.html` 前夕的 `a.adoc`
+----
+:cPath   : .
+:dPath   : .
+
+{% include "./b.adoc" %}
+{% include "{cpath}/c.adoc" %}
+{% include "{dpath}/d.adoc" %}
+
+I'm a.adoc
+----
+**** 思考： `gitbook` 方式将 `:cPath   : .` 这种转化成 `{% set cPath = "." %}` 的 `gitbook` 模板语法，
+然后将 `include` 处改成 `{% include "{{dpath}}/d.adoc" %}` ，在 `{% %}` 里包含 `{{ }}` 不一定可用，暂且记录下来
+
+[[pluginWarning]]
+== 3. 插件注意事项：
+* 不能和 `advanced-emoji` 插件混合使用，如果需要使用，方法如下：
+1. 使用我 `fork` 下来的一份插件代码：
+*** link:https://github.com/codeclou/gitbook-plugin-advanced-emoji[advanced-emoji 项目原址]
+*** 安装：
++
+[source, json]
+.book.json
+----
+{
+    "plugins": [
+        "advanced-emoji@git+https://github.com/ZihoRo/gitbook-plugin-advanced-emoji.git"
+    ]
+}
+----
+2. 自己 `fork` ，然后按下面说明修改， `push` 到 `github` ，剩下的就是上一方法的安装，将自己的 `github-url` 替换到 `git+` 之后
++
+[source, js]
+.修改前
+----
+// 省略非关键代码
+module.exports = {
+    // 省略非关键代码
+    hooks: {
+        "page:before": function(page) {
+            if (page.type === "markdown") {
+                // 省略非关键代码
+                return page;
+            }
+            // 此处应该有 return page;
+        }
+    }
+};
+----
++
+[source, js]
+.修改后
+----
+// 省略非关键代码
+module.exports = {
+    // 省略非关键代码
+    hooks: {
+        "page:before": function(page) {
+            if (page.type === "markdown") {
+                // 省略非关键代码
+                return page;
+            }
+            return page;
+        }
+    }
+};
+----
+3. 向原作者提 `bug` ，我英语不好，就不掺合了
+
+* 我不知道其他插件是否也有同样问题，没有去一一看了
