@@ -30,7 +30,8 @@
         "gitbook",
         "plugin",
         "asciidoc",
-        "include"
+        "include",
+        "asciidoc-include"
     ],
     "license": "MIT",
     "author": "ZihoRo <zihoro@zihoro.com>"
