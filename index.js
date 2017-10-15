@@ -1,6 +1,8 @@
 var path = require('path');
 var fs = require('fs');
 var Q = require('q');
+var request = require('request');
+var rp = require('request-promise');
 
 module.exports = {
     hooks: {
@@ -45,25 +47,47 @@ module.exports = {
                     return handlerNext(context);
                 }
                 // join path
-                context.file = path.join(context.dir, context.file);
-                return Q.nfcall(fs.readFile, context.file).then(function(text) {
-                    // reset regex lastIndex before the match string first index
-                    context.regex.lastIndex = context.regex.lastIndex - context.matchs[0].length;
-                    // trim the read file string
-                    return text.toString().trim();
-                }).then(function(text) {
-                    if(!text || text.toString().trim() === ''){
-                        // if the file string is empty, don't replace
-                        context.page.content = context.page.content.substring(1, context.page.content.length - 1);
-                        return context.page;
+                var uriReg = /^http(s?):\/\/.+/ig;
+
+                var result;
+                if(uriReg.test(context.file)){
+                    // uri
+                    if(!context.allowUriRead){
+                        return handlerNext(context);
                     }
-                    context.logger.debug.ln('----------------match: ' + context.match + ', replace: true');
-                    context.page.content = context.page.content.replace(context.match, text);
-                    return handlerNext(context);
-                }, function(error){
-                    context.logger.error.ln(error);
-                    return handlerNext(context);
-                });
+                    var options = {
+                        uri: context.file,
+                        headers: {
+                            'User-Agent': 'Request-Promise',
+                            'Content-Type': 'text/plain;charset=utf8'
+                        },
+                        json: false
+                    };
+                    result = rp(options);
+                } else {
+                    // file
+                    context.file = path.join(context.dir, context.file);
+                    result = Q.nfcall(fs.readFile, context.file);
+                }
+                return result.then(function(text) {
+                        // reset regex lastIndex before the match string first index
+                        context.regex.lastIndex = context.regex.lastIndex - context.matchs[0].length;
+                        // trim the read file string
+                        return text.toString().trim();
+                    }).then(function(text) {
+                        if(!text || text.toString().trim() === ''){
+                            // if the file string is empty, don't replace
+                            context.page.content = context.page.content.substring(1, context.page.content.length - 1);
+                            return context.page;
+                        }
+                        context.logger.debug.ln('----------------match: ' + context.match + ', replace: true');
+                        context.page.content = context.page.content.replace(context.match, text);
+                        return handlerNext(context);
+                    }, function(error){
+                        context.logger.error.ln(error);
+                        return handlerNext(context);
+                    });
+
             };
             // add '\n' into page.content first and last
             page.content = '\n' + page.content + '\n';
@@ -72,6 +96,8 @@ module.exports = {
             context.page = page;
             context.logger = this.log;
             context.dir = path.dirname(page.rawPath);
+            var allowUriRead = /\n:allow-uri-read\s*:\s*\n/g;
+            context.allowUriRead = allowUriRead.test(page.content);
             context.regex = /\ninclude::(.+?)\[.*?\](?=\n)/g;
             context.blockHandler = function(filepath){
                 var regex = /\{(.+?)\}/ig;

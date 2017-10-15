@@ -1,7 +1,7 @@
 {
     "name": "gitbook-plugin-asciidoc-include",
     "description": "Syntax asciidoc include for Gitbook",
-    "version": "0.1.9",
+    "version": "0.2.0",
     "engines": {
       "gitbook": ">=2.4.0"
     },
@@ -24,7 +24,8 @@
         }
     },
     "dependencies": {
-        "q": "1.4.1"
+        "q": "1.4.1",
+        "request-promise": "4.2.2"
     },
     "keywords": [
         "gitbook",
