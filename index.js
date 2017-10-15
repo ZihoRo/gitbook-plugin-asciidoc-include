@@ -41,7 +41,7 @@ module.exports = {
                 // find block and replace
                 context.file = context.blockHandler(context.matchs[1]);
                 context.logger.debug.ln('----------------file: ' + context.file + ', matchs[1]: ' + context.matchs[1]);
-                if(new RegExp('\\{(.+?)\\}', 'g').test(context.file) || new RegExp('\\w{2,}://', 'g').test(context.file) || new RegExp('^git\\+', 'ig').test(context.file)){
+                if(new RegExp('\\{(.+?)\\}', 'g').test(context.file) || new RegExp('^git\\+', 'ig').test(context.file)){
                     // block not exist or filepath is not a system file path
                     context.logger.error.ln('filepath: ' + context.file + ', block not exist or filepath is not a system file path');
                     return handlerNext(context);
@@ -96,7 +96,7 @@ module.exports = {
             context.page = page;
             context.logger = this.log;
             context.dir = path.dirname(page.rawPath);
-            var allowUriRead = /\n:allow-uri-read\s*:\s*\n/g;
+            var allowUriRead = /\n:allow-uri-read\s*:\s*\n/ig;
             context.allowUriRead = allowUriRead.test(page.content);
             context.regex = /\ninclude::(.+?)\[.*?\](?=\n)/g;
             context.blockHandler = function(filepath){
