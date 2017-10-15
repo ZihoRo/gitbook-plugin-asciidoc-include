@@ -25,6 +25,7 @@
     },
     "dependencies": {
         "q": "1.4.1",
+        "request": "2.34",
         "request-promise": "4.2.2"
     },
     "keywords": [
